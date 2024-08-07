@@ -4,6 +4,8 @@
     <a href="https://go-cart.io"><img src ="img/gocart_logo.svg" width="65%"></a>
 </p>
 
+...
+
 This program uses the fast flow-based method developed by Michael T. Gastner, Vivien Seguy, and Pratyush More. For more information, you may refer to the following [paper](https://www.pnas.org/content/115/10/E2156):
 
 Gastner MT, Seguy V, More P. _Fast flow-based algorithm for creating density-equalizing map projections_. Proc Natl Acad Sci USA 115(10):E2156–E2164 (2018). <https://doi.org/10.1073/pnas.0400280101>
@@ -69,8 +71,8 @@ Run the following command (replace `your-geojson-file.geojson` file with your ge
 
         cartogram your-geojson-file.geojson your-csv-file.csv
 
--   The first argument's input is a GeoJSON or JSON file, in the standard GeoJSON format.
--   The second argument's input is a `.csv` file with data about target areas.
+- The first argument's input is a GeoJSON or JSON file, in the standard GeoJSON format.
+- The second argument's input is a `.csv` file with data about target areas.
 
 _Note: use the `-h` flag to display more options._
 
@@ -82,24 +84,24 @@ The CSV file should be in the following format:
 | Vlaanderen | 6589069                 | #f1c40f |
 | Wallonie   | 3633795                 | #34495e |
 
--   `NAME_1` should be the same as the identifying property's name in the GeoJSON. The rows should also have the same data as is present in the identifying property.
--   `Data` contains the data you would like your cartogram to based on.
--   `Color` is the color you would like the geographic region to be. Colors may be represented in the following manner:
+- `NAME_1` should be the same as the identifying property's name in the GeoJSON. The rows should also have the same data as is present in the identifying property.
+- `Data` contains the data you would like your cartogram to based on.
+- `Color` is the color you would like the geographic region to be. Colors may be represented in the following manner:
 
-    1.  `cornflowerblue`: html color codes supported by `CSS3` (case-insensitive), full list of supported colors may be found in the "Extended colors" section of [web colors](https://en.wikipedia.org/wiki/Web_colors).
-    2.  `"rgb(255, 0, 120)"` or `rgb(255 0 120)` or `"255, 0, 120"` or `255 0 120`: red, green and blue values out of 255.
-    3.  `#e74c3c`: hex code of color, must start with `#`.
+  1.  `cornflowerblue`: html color codes supported by `CSS3` (case-insensitive), full list of supported colors may be found in the "Extended colors" section of [web colors](https://en.wikipedia.org/wiki/Web_colors).
+  2.  `"rgb(255, 0, 120)"` or `rgb(255 0 120)` or `"255, 0, 120"` or `255 0 120`: red, green and blue values out of 255.
+  3.  `#e74c3c`: hex code of color, must start with `#`.
 
 **You may find sample GeoJSON (containing geographic data) and CSV (containing information about target areas, colors and other visual variables) files in the `cartogram-cpp/sample_data` directory.**
 
 ### Testing
 
-If you'd like to contribute to the project, please run our tests after you make any changes. 
+If you'd like to contribute to the project, please run our tests after you make any changes.
 
 To run the unit tests, execute the following command:
 
     ctest --verbose
-    
+
 To learn more about the tests, you may go to the `cartogram-cpp/tests` directory and read the `README.md` file.
 
 Additionally, you may go to the `cartogram-cpp/tests` directory and run the following command:
