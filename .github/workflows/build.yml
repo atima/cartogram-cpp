@@ -10,84 +10,72 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-      with:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
           fetch-depth: 0
 
-    - name: Install Dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y build-essential manpages-dev software-properties-common nlohmann-json3-dev libcgal-dev libomp-dev libfftw3-dev libcairo2-dev libboost-all-dev cmake
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt update && sudo apt install -y gcc-11 g++-11
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential manpages-dev software-properties-common nlohmann-json3-dev libcgal-dev libomp-dev libfftw3-dev libcairo2-dev libboost-all-dev cmake
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt update && sudo apt install -y gcc-11 g++-11
 
-    - name: Build Project
-      run: |
-        CORES=$(nproc)
-        sudo cmake -B build
-        sudo make -j${CORES} -C build
-        
-    #- name: Run Tests
-    #  run: |
-    #    sudo make install -C build
-    #    cd tests/
-    #    chmod +x stress_test.sh
-    #    bash stress_test.sh
+      - name: Build Project
+        run: |
+          CORES=$(nproc)
+          sudo cmake -B build
+          sudo make -j${CORES} -C build
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: cartogram
-        path: ./build/bin/cartogram
-        
-    - name: Generate and Push Tag
-      id: generate_tag
-      run: |
-        # Configure git committer
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        # Fetch tags
-        git fetch --tags
-        
-        # Get the latest tag name, default to Release 0 if none exists
-        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "Release-0")
-        
-        # Extract the release number by stripping the 'Release ' prefix
-        release_number=${latest_tag#"Release-"}
+      #- name: Run Tests
+      #  run: |
+      #    sudo make install -C build
+      #    cd tests/
+      #    chmod +x stress_test.sh
+      #    bash stress_test.sh
 
-        # Increment the release number
-        new_release_number=$((release_number + 1))
-        new_tag="Release-${new_release_number}"
-
-        # Create the new tag
-        git tag -a "${new_tag}" -m "New release ${new_tag}"
-
-        # Push the tag to the repository
-        git push origin "${new_tag}"
-        
-        echo "release_number=${new_release_number}" >> $GITHUB_OUTPUT
-        echo "new_tag=${new_tag}" >> $GITHUB_OUTPUT
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: ${{ steps.generate_tag.outputs.new_tag }}
-        files: build/bin/cartogram
-        body: "Rolling release ${{ steps.generate_tag.outputs.release_number }}"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  deploy:
-    needs: build-and-release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy binary to go-cart.io
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          script: /home/cartogram/deploy-cartogram-cpp.sh
+          name: cartogram
+          path: ./build/bin/cartogram
+
+      - name: Generate and Push Tag
+        id: generate_tag
+        run: |
+          # Configure git committer
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          # Fetch tags
+          git fetch --tags
+
+          # Get the latest tag name, default to Release 0 if none exists
+          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "Release-0")
+
+          # Extract the release number by stripping the 'Release ' prefix
+          release_number=${latest_tag#"Release-"}
+
+          # Increment the release number
+          new_release_number=$((release_number + 1))
+          new_tag="Release-${new_release_number}"
+
+          # Create the new tag
+          git tag -a "${new_tag}" -m "New release ${new_tag}"
+
+          # Push the tag to the repository
+          git push origin "${new_tag}"
+
+          echo "release_number=${new_release_number}" >> $GITHUB_OUTPUT
+          echo "new_tag=${new_tag}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.generate_tag.outputs.new_tag }}
+          files: build/bin/cartogram
+          body: "Rolling release ${{ steps.generate_tag.outputs.release_number }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
