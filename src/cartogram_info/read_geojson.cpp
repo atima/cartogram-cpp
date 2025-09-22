@@ -202,14 +202,33 @@ static nlohmann::json load_geojson(const std::string &geometry_file_name)
 }
 
 // Read coordinate reference system if it is included in the GeoJSON
-static void extract_crs(const nlohmann::json &j, std::string &crs)
+static void extract_crs(
+  const nlohmann::json &j,
+  std::string &crs,
+  const bool is_projected)
 {
   if (
     j.contains("crs") && j["crs"].contains("properties") &&
     j["crs"]["properties"].contains("name")) {
     crs = j["crs"]["properties"]["name"];
+    std::cerr << "Coordinate reference system found: " << crs << std::endl;
+    return;
   }
-  std::cerr << "Coordinate reference system: " << crs << std::endl;
+  std::cerr << "No `crs` field found." << std::endl;
+  if (!is_projected) {
+    std::cerr << "Default coordinate reference system assumed: " << crs
+              << std::endl;
+  }
+}
+
+static bool is_projected(const nlohmann::json &j)
+{
+  if (
+    j.contains("properties") && j["properties"].contains("projected") &&
+    j["properties"]["projected"].is_boolean()) {
+    return j["properties"]["projected"];
+  }
+  return false;
 }
 
 // Extract unique properties from GeoJSON and return them as a map
@@ -402,13 +421,15 @@ void CartogramInfo::read_geojson()
     std::exit(19);
   }
 
-  extract_crs(j, crs_);
-  // Skip projection, this is an output from our program
-  if (crs_ == custom_crs) {
-    std::cerr << "WARNING: " << custom_crs << " detected. "
+  // If already projected, skip projection
+  if (is_projected(j)) {
+    is_projected_ = true;
+    std::cerr << "WARNING: `projected=true` property detected. "
               << "Applying --skip_projection flag." << std::endl;
     args_.skip_projection = true;
   }
+
+  extract_crs(j, crs_, is_projected_);
 
   // If args_.id_col is specified, use that as the sole unique property
   if (args_.id_col) {

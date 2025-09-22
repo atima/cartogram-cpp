@@ -7,8 +7,8 @@ void CartogramInfo::reposition_insets(bool output_to_stdout)
   // Warn user about repositoning insets with `--skip_projection` flag
   if (args_.skip_projection && n_insets() > 1) {
     std::cerr << "WARNING: Trying to repostion insets with ";
-    if (crs_ == custom_crs) {
-      std::cerr << "custom coordinate reference system " << custom_crs << ". ";
+    if (is_projected_) {
+      std::cerr << "original input map already projected. ";
     } else {
       std::cerr << "`--skip_projection` flag present. ";
     }

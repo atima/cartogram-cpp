@@ -18,6 +18,7 @@ private:
   std::string map_name_;
   std::map<std::string, std::vector<std::string>> unique_properties_map_;
   int id_col_;
+  bool is_projected_;
 
   // TODO: We assume that either all external rings are counterclockwise or
   //       all are clockwise. This dichotomy covers most geospatial boundary

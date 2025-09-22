@@ -10,6 +10,7 @@ CartogramInfo::CartogramInfo(const Arguments args) : args_(args)
   is_world_map_ = args_.world;
   timer.start("Total time");
   crs_ = "+proj=longlat";
+  is_projected_ = false;
 
   if (!args.visual_file_name.empty()) {
 
