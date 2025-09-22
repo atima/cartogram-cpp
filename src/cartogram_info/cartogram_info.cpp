@@ -323,12 +323,13 @@ void CartogramInfo::rescale_insets()
 
   // Iterate over insets and normalize areas
   for (InsetState &inset_state : inset_states_) {
-    inset_state.normalize_inset_area(cart_initial_total_target_area());
+    inset_state.normalize_inset_area(
+      default_long_grid_length * default_long_grid_length);
 
     // Rescale copy of original map too
     if (args_.redirect_exports_to_stdout) {
       inset_state.normalize_inset_area(
-        cart_initial_total_target_area(),
+        default_long_grid_length * default_long_grid_length,
         false,
         true);
     }
