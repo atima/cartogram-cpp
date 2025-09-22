@@ -192,9 +192,6 @@ void CartogramInfo::json_to_geojson(
       add_dividers_to_geojson(container[(container.size() - 1)]);
   }
 
-  // Add/replace CRS to custom_crs
-  new_json["crs"] = {{"type", "name"}, {"properties", {{"name", custom_crs}}}};
-
   new_json["properties"]["note"] =
     "Created using cartogram-cpp / go-cart.io with custom projection, not in "
     "EPSG:4326";
