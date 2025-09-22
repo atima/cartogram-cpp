@@ -147,6 +147,7 @@ bool InsetState::continue_integrating() const
 
 void InsetState::integrate(ProgressTracker &progress_tracker)
 {
+  std::cerr << std::endl << "Integrating inset " << pos_ << std::endl;
 
   timer.start(inset_name_);
 
