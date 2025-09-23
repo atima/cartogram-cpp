@@ -56,15 +56,15 @@ void InsetState::prepare_for_integration()
   }
 
   // Store initial inset area to calculate area drift,
-  // set area errors based on this initial_area
   store_initial_area();
-  set_area_errors();
 
   // Store initial target area to normalize inset areas
   store_initial_target_area();
 
   // Normalize total target area to be equal to initial area
   normalize_target_area();
+
+  set_area_errors();
 }
 
 void InsetState::cleanup_after_integration()
@@ -147,6 +147,7 @@ bool InsetState::continue_integrating() const
 
 void InsetState::integrate(ProgressTracker &progress_tracker)
 {
+  std::cerr << std::endl << "Integrating inset " << pos_ << std::endl;
 
   timer.start(inset_name_);
 

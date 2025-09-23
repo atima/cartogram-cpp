@@ -7,8 +7,8 @@ void CartogramInfo::reposition_insets(bool output_to_stdout)
   // Warn user about repositoning insets with `--skip_projection` flag
   if (args_.skip_projection && n_insets() > 1) {
     std::cerr << "WARNING: Trying to repostion insets with ";
-    if (crs_ == custom_crs) {
-      std::cerr << "custom coordinate reference system " << custom_crs << ". ";
+    if (is_projected_) {
+      std::cerr << "original input map already projected. ";
     } else {
       std::cerr << "`--skip_projection` flag present. ";
     }
@@ -31,31 +31,10 @@ void CartogramInfo::reposition_insets(bool output_to_stdout)
     bboxes.at(inset_pos) = inset_state.bbox(output_to_stdout);
   }
 
-  // Calculate the width and height of all positioned insets without spacing
-  double width = bboxes.at("C").xmax() - bboxes.at("C").xmin() +
-                 bboxes.at("L").xmax() - bboxes.at("L").xmin() +
-                 bboxes.at("R").xmax() - bboxes.at("R").xmin();
-
-  // Considering edge cases where the width of the insets named "T" or "B"
-  // might be greater than the width of "C", "L", "R" insets combined
-  width = std::max({
-    bboxes.at("T").xmax() - bboxes.at("T").xmin(),  // width of inset T
-    bboxes.at("B").xmax() - bboxes.at("B").xmin(),  // width of inset B
-    width  // width of inset C + L + R
-  });
-
-  // Similarly for height instead of width
-  double height = bboxes.at("C").ymax() - bboxes.at("C").ymin() +
-                  bboxes.at("T").ymax() - bboxes.at("T").ymin() +
-                  bboxes.at("B").ymax() - bboxes.at("B").ymin();
-  height = std::max({
-    bboxes.at("R").ymax() - bboxes.at("R").ymin(),  // height of inset R
-    bboxes.at("L").ymax() - bboxes.at("L").ymin(),  // height of inset L
-    height  // height of inset C + T + B
-  });
+  const double height_C = bboxes.at("C").ymax() - bboxes.at("C").ymin();
+  const double width_C = bboxes.at("C").xmax() - bboxes.at("C").xmin();
 
   // Spacing between insets
-  const double inset_spacing = std::max(width, height) * inset_spacing_factor;
   for (InsetState &inset_state : inset_states_) {
     std::string inset_pos = inset_state.pos();
 
@@ -70,6 +49,10 @@ void CartogramInfo::reposition_insets(bool output_to_stdout)
       x = std::max(
         {bboxes.at("C").xmax(), bboxes.at("B").xmax(), bboxes.at("T").xmax()});
       x += bboxes.at("R").xmax();
+
+      const double width_R = bboxes.at("R").xmax() - bboxes.at("R").xmin();
+      const double inset_spacing = (width_C + width_R) * inset_spacing_factor;
+
       x += inset_spacing;
     } else if (pos == "L") {
       x = std::min(
@@ -77,11 +60,20 @@ void CartogramInfo::reposition_insets(bool output_to_stdout)
 
       // At "L", xmin is negative and lies in the 2nd and 3rd quadrant
       x += bboxes.at("L").xmin();
+
+      const double width_L = bboxes.at("L").xmax() - bboxes.at("L").xmin();
+      const double inset_spacing = (width_C + width_L) * inset_spacing_factor;
+
       x -= inset_spacing;
     } else if (pos == "T") {
       y = std::max(
         {bboxes.at("C").ymax(), bboxes.at("R").ymax(), bboxes.at("L").ymax()});
       y += bboxes.at("T").ymax();
+
+      const double height_T = bboxes.at("T").ymax() - bboxes.at("T").ymin();
+      const double inset_spacing =
+        (height_C + height_T) * inset_spacing_factor;
+
       y += inset_spacing;
     } else if (pos == "B") {
       y = std::min(
@@ -89,6 +81,11 @@ void CartogramInfo::reposition_insets(bool output_to_stdout)
 
       // At "B", ymin is negative and lies in the 3rd and 4th quadrant
       y += bboxes.at("B").ymin();
+
+      const double height_B = bboxes.at("B").ymax() - bboxes.at("B").ymin();
+      const double inset_spacing =
+        (height_C + height_B) * inset_spacing_factor;
+
       y -= inset_spacing;
     }
 

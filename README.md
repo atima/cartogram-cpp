@@ -177,6 +177,7 @@ For Windows users, we recommend using our program through Windows Subsystem for 
 - If running one of the commands starting with `.venv/bin/cmake` gives you an error, it is likely that a dependency was not installed correctly. Rerun the appropriate commands above to install the required dependencies and try again. If it still fails, make sure you have the virtual environment activated by running `source .venv/bin/activate` in your terminal, and then try again.
 - If you get an error which mentions permission issues, try running the command that gave you the error with `sudo` prefixed. Alternatively, you may follow the next instruction.
 - If you still get permission issues or VScode's `CMake: Install` does not work, make sure you own the relevant directories (i.e. `/usr/local/bin` and the working directory). You may assign ownership to your account with `sudo chown -R $(whoami) .`, replacing `.` with the directory of choice.
+- Use `cartogram --help` to see all available options. If you are not getting the intended output, review the appropriate flags to check whether any of them are relevant to your use case. The default behavior may not always be what you expect, and explicitly specifying a flag can improve performance. For example, using the `--id` flag will speed up the program; otherwise, it will attempt to automatically detect the identifying property, which may take longer.
 
 ### Benchmarking
 
@@ -218,7 +219,7 @@ To push changes to production, please follow the the instructions on [go-cart-io
 
 ### Contributing
 
-Contributions are highly encouraged! Please feel free to take a stab at any at any of the open issues and send in a pull request. If you need help getting setup or more guidance contributing, please @ any of the main contributors (@adisidev, @nihalzp, @mgastner) under any of the open issues (or after creating your own issue), and we'll be happy to guide you!
+Contributions are highly encouraged! Please feel free to take a stab at any at any of the open issues and send in a pull request. If you need help getting setup or more guidance contributing, please @ any of the main contributors (@nihalzp, @adisidev, @mgastner) under any of the open issues (or after creating your own issue), and we'll be happy to guide you!
 
 If you'd like to contribute to the project, please run our tests after you make any changes.
 
