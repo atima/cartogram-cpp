@@ -63,16 +63,25 @@ In each subdirectory, there should be:
   optionally added.
   The minimal format of the CSV file should be:
 
-  | shapeName         | Population |
-  | :---------        | :--------- |
-  | Brussels-Capital  | 1208542    |
-  | Flanders          | 6589069    |
-  | Wallonia          | 3633795    |
+  | shapeName        | Population (people) | Label |
+  | :--------------- | :------------------ | :---- |
+  | Brussels-Capital | 1208542             | BRU   |
+  | Flanders         | 6589069             | VLG   |
+  | Wallonia         | 3633795             | WAL   |
 
-  The column header for the divisions (e.g. `shapeName`) must match a key in the
-  GeoJSON file.
-  The names of the divisions (e.g. Wallonia etc.) must match the corresponding values
-  in the GeoJSON.
+  - **First column** — Contains the names of the divisions (e.g., _Wallonia_).
+    The values must exactly match those in the corresponding GeoJSON file.
+    The column header (e.g., `shapeName`) must also match a key in the GeoJSON.
+
+  - **Second column** — Contains the statistical data used as the target area for the cartogram.
+    The column header should include the name and unit of the statistic (e.g., `Population (people)`).
+    The unit must be enclosed in parentheses, but it may be left blank (e.g., `Population`).
+
+  - **`Label` column** — Contains abbreviations for the divisions.
+
+  - **(Optional) `ShapeName` column** — A case-sensitive column that provides a _friendly name_ for each division.
+    This is useful if the first column uses non-friendly identifiers such as ISO-3 country codes but you prefer to display readable country names.
+
   There are additional examples available in the directory `sample_data`.
 
   CSV file names should follow the pattern:
